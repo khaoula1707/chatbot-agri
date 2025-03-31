@@ -241,6 +241,7 @@
       <button onclick="handleSuggestionClick(this)">ما هي أنواع الدعم الفلاحي المتاحة؟</button>
     </div>
     
+   
 
     <div class="typing-indicator" id="typing" style="display: none;">🕐 جاري إعداد الإجابة...</div>
      
@@ -248,6 +249,7 @@
       <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." />
       <button class="mic-btn" onclick="startSpeech()">🎤</button>
       <button onclick="sendMessage()">إرسال</button>
+      <button onclick="stopTyping()" id="stopBtn" style="display: none; background-color: #b00020;">⛔️ إيقاف الإجابة</button>
     </div>
   </div>
 
@@ -262,7 +264,8 @@
     const chatbox = document.getElementById("chatbox");
     const input = document.getElementById("userInput");
     const typing = document.getElementById("typing");
-   
+    let typingInterval = null;
+
     let latitude = null;
     let longitude = null;
 
@@ -271,26 +274,35 @@
       sendMessage();
     }
     const allSuggestions = [
-     "ما هي الوثائق المطلوبة لحفر بئر؟",
-     "كيف أقدم طلب دعم للمشروع الفلاحي؟",
-     "ما هي إجراءات تأسيس تعاونية فلاحية؟",
-     "كيف أطلب شهادة الاستغلال الفلاحي؟",
-     "ما هي أنواع الدعم الفلاحي المتاحة؟",
-     "هل أحتاج إلى رخصة لحفر ساقية؟",
-     "ما هي الشروط للاستفادة من المخطط الأخضر؟"
+    "ما هي الوثائق المطلوبة لحفر بئر؟",
+    "كيف أقدم طلب دعم للمشروع الفلاحي؟",
+    "ما هي إجراءات تأسيس تعاونية فلاحية؟",
+    "كيف أطلب شهادة الاستغلال الفلاحي؟",
+    "ما هي أنواع الدعم الفلاحي المتاحة؟",
+    "هل أحتاج إلى رخصة لحفر ساقية؟",
+    "ما هي الشروط للاستفادة من المخطط الأخضر؟"
 ];
 
-// هادي اللي كتدير الخدمة ديال التبديل
  function handleSuggestionClick(button) {
    const text = button.textContent;
    input.value = text;
    sendMessage();
 
-   // نحيد السؤال لي تضغط عليه ونختار واحد جديد
-   const alternatives = allSuggestions.filter(s => s !== text);
-   const newSuggestion = alternatives[Math.floor(Math.random() * alternatives.length)];
-   button.textContent = newSuggestion;
+   // نجيب كل الأسئلة اللي باقية في الأزرار
+   const currentSuggestions = Array.from(document.querySelectorAll(".suggestions button"))
+                                  .map(btn => btn.textContent);
+
+   // نحيد السؤال لي تضغط عليه ونحيد حتى اللي دجا كاينين باش ما نكررهمش
+   const alternatives = allSuggestions.filter(
+    s => !currentSuggestions.includes(s) && s !== text
+   );
+
+   if (alternatives.length > 0) {
+    const newSuggestion = alternatives[Math.floor(Math.random() * alternatives.length)];
+    button.textContent = newSuggestion;
+  }
 }
+
 
     window.onload = function () {
       if (localStorage.getItem("theme") === "dark") {
@@ -315,30 +327,35 @@
     function addMessage(text, sender) {
   const message = document.createElement("div");
   message.className = "message " + sender;
- 
   chatbox.appendChild(message);
 
-  // Effet fade-in
-  setTimeout(() => {
-    message.style.opacity = 1;
-  }, 100);
-
-  // Si sender bot: تطبيق الكتابة المتدرجة
   if (sender === "bot") {
     let i = 0;
-    const typingInterval = setInterval(() => {
+    document.getElementById("stopBtn").style.display = "inline-block"; // ✅ إظهار زر الإيقاف
+
+    typingInterval = setInterval(() => {
       message.innerText = text.slice(0, i);
       i++;
       if (i > text.length) {
         clearInterval(typingInterval);
+        document.getElementById("stopBtn").style.display = "none"; // 🔚 إخفاء الزر بعد الانتهاء
       }
       chatbox.scrollTop = chatbox.scrollHeight;
-    }, 20); // المدة بين الحروف
+    }, 20);
   } else {
     message.innerText = text;
     chatbox.scrollTop = chatbox.scrollHeight;
   }
 }
+function stopTyping() {
+  if (typingInterval) {
+    clearInterval(typingInterval);
+    typingInterval = null;
+    document.getElementById("stopBtn").style.display = "none";
+    addMessage("⛔️ تم إيقاف الإجابة. يمكنك تعديل سؤالك وإعادة الإرسال.", "bot");
+  }
+}
+
 
 
     function scrollToBottom() {
