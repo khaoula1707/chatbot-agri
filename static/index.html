@@ -224,7 +224,6 @@
     </div>
   </div>
 
-  <!-- ⚠️ ملاحظة أسفل الصفحة -->
   <div class="footer-note">
     ChatGPT peut faire des erreurs. Envisagez de vérifier les informations importantes.
   </div>
@@ -278,7 +277,8 @@
       typing.style.display = "block";
 
       try {
-        const res = await fetch("http://127.0.0.1:8000/chat", {
+        const res = await fetch("https://chatbot-agri-production.up.railway.app/chat", {
+
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -321,7 +321,6 @@
       recognition.onresult = function (event) {
         const transcript = event.results[0][0].transcript;
 
-        // ذكاء إضافي: تحويل الصوت إلى سؤال واضح
         if (transcript.includes("بير") || transcript.includes("بئر")) {
           input.value = "ما هي الوثائق المطلوبة لحفر بئر؟";
         } else if (transcript.includes("مشروع") || transcript.includes("استثمار")) {
@@ -336,7 +335,8 @@
     }
 
     async function resetConversation() {
-      await fetch("http://127.0.0.1:8000/reset", {
+      await fetch("https://chatbot-agri-production.up.railway.app/reset", {
+
         method: "POST",
         credentials: "include"
       });
