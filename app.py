@@ -6,12 +6,13 @@ import requests
 import os
 import json
 import uuid
+import difflib
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 
 app = FastAPI()
 
-# إعدادات CORS
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,10 +21,7 @@ app.add_middleware(
     allow_credentials=True
 )
 
-# حفظ المحادثات حسب session_id
 conversations = {}
-
-# ملفات الواجهة
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
@@ -31,7 +29,7 @@ def lire_page():
     return FileResponse("static/index.html")
 
 
-# 📥 تحميل جميع ملفات JSON
+# 📥 Chargement des démarches
 def charger_donnees_demarches():
     demarches = []
     dossier = "data"
@@ -45,11 +43,8 @@ def charger_donnees_demarches():
                 elif isinstance(contenu, dict):
                     demarches.append(contenu)
     return demarches
-demarches = charger_donnees_demarches()
-print("📂 عدد الملفات:", len(demarches))
 
-
-# 🗺️ إعداد geopy
+# 🗺️ Reverse Geocoding
 geolocator = Nominatim(user_agent="farmer_assistant")
 
 def reverse_geocode(lat, lon):
@@ -60,7 +55,7 @@ def reverse_geocode(lat, lon):
         return None
 
 
-# 💬 Route principale
+# 💬 Route principale du chatbot
 @app.post("/chat")
 async def chat(request: Request):
     data = await request.json()
@@ -76,39 +71,38 @@ async def chat(request: Request):
     print("📩 Message reçu:", user_message)
     print("📍 Coordonnées:", lat, lon)
 
-    # تحويل الإحداثيات إلى اسم مكان
     location_name = reverse_geocode(lat, lon) if lat and lon else None
 
-    # البحث في البيانات
+    # 🔍 Recherche améliorée
     contexte = ""
     source = "🔵 تم توليد هذه الإجابة من نموذج الذكاء الاصطناعي."
     demarches = charger_donnees_demarches()
-    for dem in demarches:
-        titre = dem.get("titre", "")
-        if titre and (titre.strip() in user_message or user_message.strip() in titre):
+    titres = [d.get("titre", "") for d in demarches if d.get("titre")]
 
-            contenu = dem.get("contenu", "")
-            contexte = f"{titre}\n{contenu}"
-            source = "🟢 تم استخراج هذه المعلومات من وثيقة رسمية."
-            break
+    # Recherche approximative
+    titre_proche = difflib.get_close_matches(user_message, titres, n=1, cutoff=0.5)
+    if titre_proche:
+        for dem in demarches:
+            if dem.get("titre", "").strip() == titre_proche[0].strip():
+                contenu = dem.get("contenu", "")
+                contexte = f"{dem['titre']}\n{contenu}"
+                source = "🟢 تم استخراج هذه المعلومات من وثيقة رسمية."
+                break
 
-    # هل المستخدم طلب فقط وصف عام؟
+    # 📌 Description générale ?
     description_generale = any(
         mot in user_message for mot in [
             "فكرة عامة", "بصفة عامة", "شرح بسيط", "بغيت غير نعرف", "بغا نعرف فقط", "شنو هي"
         ]
     )
 
-    if description_generale:
-        system_prompt = """
+    system_prompt = """
 أنت مساعد ذكي يساعد الفلاحين المغاربة في فهم الإجراءات الإدارية.
 
 ✅ إذا طلب المستخدم فقط "فكرة عامة" أو "وصف عام"، فاعطه فقط شرحًا عامًا مبسطًا بدون الدخول في التفاصيل (لا شروط، لا وثائق، لا جهات).
 
 ✅ كن واضحًا ومباشرًا، واستعمل لغة سهلة وعربية فصحى.
-"""
-    else:
-        system_prompt = """
+""" if description_generale else """
 أنت مساعد ذكي يساعد الفلاحين المغاربة في فهم الإجراءات الإدارية. أجب دائمًا باللغة العربية، بأسلوب مهني وواضح وسهل الفهم.
 
 ✅ إذا كانت معلومات المستخدم غير كافية، فلا تعطه جوابًا مباشرًا. اسأله أسئلة متابعة للحصول على التفاصيل الناقصة (مثل الموقع، نوع الأرض، نوع المشروع، الجهة المسؤولة، إلخ).
@@ -120,10 +114,10 @@ async def chat(request: Request):
 ❌ لا تستخدم رموز Markdown أو HTML. فقط نص بسيط ومنظم باللغة العربية.
 """
 
-    # إعداد الرسائل حسب session
+    # 💬 Gestion de session
     if session_id not in conversations:
         conversations[session_id] = [{"role": "system", "content": system_prompt}]
-    elif conversations[session_id][0]["role"] == "system":
+    else:
         conversations[session_id][0]["content"] = system_prompt
 
     if location_name:
@@ -137,7 +131,7 @@ async def chat(request: Request):
 
     conversations[session_id].append({"role": "user", "content": user_message})
 
-    # 🚀 Appel DeepSeek
+    # 🚀 API DeepSeek
     response = requests.post(
         "https://api.deepseek.com/chat/completions",
         headers={
@@ -165,7 +159,7 @@ async def chat(request: Request):
     return response
 
 
-# 🔄 Reset session
+# 🔄 Réinitialisation de session
 @app.post("/reset")
 async def reset_conversation(request: Request):
     session_id = request.cookies.get("session_id")
