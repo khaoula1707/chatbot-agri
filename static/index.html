@@ -62,6 +62,7 @@
       flex-direction: column;
       align-items: center;
       padding: 10px;
+      overflow: hidden;
     }
 
     .chatbox {
@@ -105,12 +106,15 @@
     }
 
     .input-box {
+      position: sticky;
+      bottom: 0;
+      background-color: var(--bg);
       width: 100%;
       max-width: 900px;
       display: flex;
       gap: 10px;
-      margin-top: 10px;
-      padding-bottom: 10px;
+      padding: 10px;
+      z-index: 10;
     }
 
     input {
@@ -177,23 +181,6 @@
       color: #777;
       padding: 10px;
     }
-
-    @media (max-width: 600px) {
-      .chatbox, .input-box {
-        max-width: 100%;
-        border-radius: 0;
-        padding: 10px;
-      }
-
-      input {
-        font-size: 14px;
-      }
-
-      button {
-        font-size: 14px;
-        padding: 10px 14px;
-      }
-    }
   </style>
 </head>
 <body>
@@ -208,8 +195,7 @@
   <div class="main">
     <div class="chatbox" id="chatbox"></div>
 
-    <!-- 💡 اقتراحات الأسئلة -->
-    <div class="suggestions" id="suggestions">
+    <div class="suggestions">
       <button onclick="fillSuggestion('ما هي الوثائق المطلوبة لحفر بئر؟')">ما هي الوثائق المطلوبة لحفر بئر؟</button>
       <button onclick="fillSuggestion('كيف أطلب ترخيص لمشروع فلاحي؟')">كيف أطلب ترخيص لمشروع فلاحي؟</button>
       <button onclick="fillSuggestion('أريد الاستفادة من الدعم الفلاحي')">أريد الاستفادة من الدعم الفلاحي</button>
@@ -224,9 +210,7 @@
     </div>
   </div>
 
-  <div class="footer-note">
-    قد يرتكب أخطاء. يُنصح بالتحقق من المعلومات المهمة.
-  </div>
+  <div class="footer-note">قد يرتكب أخطاء. يُنصح بالتحقق من المعلومات المهمة.</div>
 
   <script>
     const chatbox = document.getElementById("chatbox");
@@ -265,7 +249,7 @@
       message.className = "message " + sender;
       message.innerText = text;
       chatbox.appendChild(message);
-      chatbox.scrollTop = chatbox.scrollHeight;
+      chatbox.scrollTop = chatbox.scrollHeight; // ⬅️ Auto scroll to bottom
     }
 
     async function sendMessage() {
@@ -278,7 +262,6 @@
 
       try {
         const res = await fetch("https://chatbot-agri-production.up.railway.app/chat", {
-
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -320,7 +303,6 @@
       recognition.lang = 'ar-MA';
       recognition.onresult = function (event) {
         const transcript = event.results[0][0].transcript;
-
         if (transcript.includes("بير") || transcript.includes("بئر")) {
           input.value = "ما هي الوثائق المطلوبة لحفر بئر؟";
         } else if (transcript.includes("مشروع") || transcript.includes("استثمار")) {
@@ -328,7 +310,6 @@
         } else {
           input.value = transcript;
         }
-
         sendMessage();
       };
       recognition.start();
@@ -336,7 +317,6 @@
 
     async function resetConversation() {
       await fetch("https://chatbot-agri-production.up.railway.app/reset", {
-
         method: "POST",
         credentials: "include"
       });
