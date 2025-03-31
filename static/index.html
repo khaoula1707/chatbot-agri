@@ -254,7 +254,7 @@
     </div>
   </div>
 
-  <button class="scroll-down-btn" id="scrollDownBtn" onclick="scrollToBottom()">⬇️</button>
+  
 
   <div class="footer-note">قد يرتكب أخطاء. يُنصح بالتحقق من المعلومات المهمة.</div>
 
@@ -292,12 +292,33 @@
     };
 
     function addMessage(text, sender) {
-      const message = document.createElement("div");
-      message.className = "message " + sender + " fade-in"; // ✅ fade-in ici
-      message.innerText = text;
-      chatbox.appendChild(message);
-      scrollToBottom();
-    }
+  const message = document.createElement("div");
+  message.className = "message " + sender;
+  message.style.opacity = 0;
+  chatbox.appendChild(message);
+
+  // Effet fade-in
+  setTimeout(() => {
+    message.style.opacity = 1;
+  }, 100);
+
+  // Si sender bot: تطبيق الكتابة المتدرجة
+  if (sender === "bot") {
+    let i = 0;
+    const typingInterval = setInterval(() => {
+      message.innerText = text.slice(0, i);
+      i++;
+      if (i > text.length) {
+        clearInterval(typingInterval);
+      }
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }, 20); // المدة بين الحروف
+  } else {
+    message.innerText = text;
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
+}
+
 
     function scrollToBottom() {
       chatbox.scrollTop = chatbox.scrollHeight;
