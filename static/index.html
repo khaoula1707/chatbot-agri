@@ -290,6 +290,15 @@
         );
       }
     };
+    function speak(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ar-MA'; // يمكن تبدلو لـ 'ar-SA' أو 'fr-FR' حسب اللهجة
+    speechSynthesis.speak(utterance);
+  } else {
+    console.warn("❌ المتصفح لا يدعم النطق الصوتي.");
+  }
+}
 
     function addMessage(text, sender) {
   const message = document.createElement("div");
@@ -351,6 +360,8 @@
         const data = await res.json();
         typing.style.display = "none";
         addMessage(data.response, "bot");
+        speak(data.response); // 🗣️ يقرأ الجواب
+
       } catch (err) {
         typing.style.display = "none";
         addMessage("⚠️ حدث خطأ أثناء الاتصال بالخادم.", "bot");
