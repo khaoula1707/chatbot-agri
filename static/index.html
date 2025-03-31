@@ -243,10 +243,12 @@
       <button onclick="fillSuggestion('ما هي الوثائق المطلوبة لحفر بئر؟')">ما هي الوثائق المطلوبة لحفر بئر؟</button>
       <button onclick="fillSuggestion('ما هي إجراءات تأسيس تعاونية فلاحية؟')">ما هي إجراءات تأسيس تعاونية فلاحية؟</button>
       <button onclick="fillSuggestion('ما هي أنواع الدعم الفلاحي المتاحة؟')">ما هي أنواع الدعم الفلاحي المتاحة؟</button>
+      <button onclick="toggleVoice()">🔈 الصوت: مفعل</button>
+
     </div>
 
     <div class="typing-indicator" id="typing" style="display: none;">🕐 جاري إعداد الإجابة...</div>
-
+     
     <div class="input-box">
       <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." />
       <button class="mic-btn" onclick="startSpeech()">🎤</button>
@@ -290,15 +292,24 @@
         );
       }
     };
-    function speak(text) {
-  if ('speechSynthesis' in window) {
+    let voiceEnabled = true;
+
+function toggleVoice() {
+  voiceEnabled = !voiceEnabled;
+  document.querySelector("button[onclick='toggleVoice()']").textContent =
+    voiceEnabled ? "🔈 الصوت: مفعل" : "🔇 الصوت: معطل";
+}
+
+function speak(text) {
+  if (voiceEnabled && 'speechSynthesis' in window) {
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ar-MA'; // يمكن تبدلو لـ 'ar-SA' أو 'fr-FR' حسب اللهجة
+    utterance.lang = 'ar-MA';
+    utterance.rate = 1;
     speechSynthesis.speak(utterance);
-  } else {
-    console.warn("❌ المتصفح لا يدعم النطق الصوتي.");
   }
 }
+
+
 
     function addMessage(text, sender) {
   const message = document.createElement("div");
@@ -360,7 +371,7 @@
         const data = await res.json();
         typing.style.display = "none";
         addMessage(data.response, "bot");
-        speak(data.response); // 🗣️ يقرأ الجواب
+        speak(data.response); // 🗣️ Lire la réponse
 
       } catch (err) {
         typing.style.display = "none";
