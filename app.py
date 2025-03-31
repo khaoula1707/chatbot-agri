@@ -45,6 +45,7 @@ def charger_donnees_demarches():
                 elif isinstance(contenu, dict):
                     demarches.append(contenu)
     return demarches
+demarches = charger_donnees_demarches()
 print("📂 عدد الملفات:", len(demarches))
 
 
