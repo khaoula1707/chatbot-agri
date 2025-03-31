@@ -38,16 +38,14 @@ def charger_donnees_demarches():
     for nom_fichier in os.listdir(dossier):
         if nom_fichier.endswith(".json"):
             chemin = os.path.join(dossier, nom_fichier)
-            try:
-                with open(chemin, "r", encoding="utf-8") as f:
-                    contenu = json.load(f)
-                    if isinstance(contenu, list):
-                        demarches.extend(contenu)
-                    elif isinstance(contenu, dict):
-                        demarches.append(contenu)
-            except Exception as e:
-                print(f"Erreur lecture {nom_fichier}: {e}")
+            with open(chemin, "r", encoding="utf-8") as f:
+                contenu = json.load(f)
+                if isinstance(contenu, list):
+                    demarches.extend(contenu)
+                elif isinstance(contenu, dict):
+                    demarches.append(contenu)
     return demarches
+print("📂 عدد الملفات:", len(demarches))
 
 
 # 🗺️ إعداد geopy
@@ -86,7 +84,8 @@ async def chat(request: Request):
     demarches = charger_donnees_demarches()
     for dem in demarches:
         titre = dem.get("titre", "")
-        if titre and titre.strip() in user_message:
+        if titre and (titre.strip() in user_message or user_message.strip() in titre):
+
             contenu = dem.get("contenu", "")
             contexte = f"{titre}\n{contenu}"
             source = "🟢 تم استخراج هذه المعلومات من وثيقة رسمية."
