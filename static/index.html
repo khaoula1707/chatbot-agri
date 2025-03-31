@@ -181,7 +181,16 @@
       color: #777;
       padding: 10px;
     }
-
+    .footer-note {
+      text-align: center;
+      font-size: 13px;
+      color: #b00020;
+      background-color: #fff0f0;
+      padding: 12px;
+      border-top: 1px solid #f2c0c0;
+      margin-top: 8px;
+      font-weight: 500;
+}
     .scroll-down-btn {
       position: fixed;
       bottom: 85px;
@@ -196,19 +205,6 @@
       display: none;
       z-index: 99;
     }
-
-    /* ✅ Effet fade-in */
-    .fade-in {
-      opacity: 0;
-      animation: fadeIn 0.5s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
-    }
-
     @media (max-width: 600px) {
       .chatbox, .input-box {
         max-width: 100%;
@@ -239,13 +235,12 @@
   <div class="main">
     <div class="chatbox" id="chatbox"></div>
 
-    <div class="suggestions">
-      <button onclick="fillSuggestion('ما هي الوثائق المطلوبة لحفر بئر؟')">ما هي الوثائق المطلوبة لحفر بئر؟</button>
-      <button onclick="fillSuggestion('ما هي إجراءات تأسيس تعاونية فلاحية؟')">ما هي إجراءات تأسيس تعاونية فلاحية؟</button>
-      <button onclick="fillSuggestion('ما هي أنواع الدعم الفلاحي المتاحة؟')">ما هي أنواع الدعم الفلاحي المتاحة؟</button>
-      <button onclick="toggleVoice()">🔈 الصوت: مفعل</button>
-
+    <div class="suggestions" id="suggestions">
+      <button onclick="handleSuggestionClick(this)">ما هي الوثائق المطلوبة لحفر بئر؟</button>
+      <button onclick="handleSuggestionClick(this)">ما هي إجراءات تأسيس تعاونية فلاحية؟</button>
+      <button onclick="handleSuggestionClick(this)">ما هي أنواع الدعم الفلاحي المتاحة؟</button>
     </div>
+    
 
     <div class="typing-indicator" id="typing" style="display: none;">🕐 جاري إعداد الإجابة...</div>
      
@@ -258,14 +253,16 @@
 
   
 
-  <div class="footer-note">قد يرتكب أخطاء. يُنصح بالتحقق من المعلومات المهمة.</div>
+  <div class="footer-note">
+    ⚠️ تنبيه: قد يُصدر مساعد الفلاح إجابات غير دقيقة أحيانًا. يُفضل دائمًا التحقق من المعلومات الرسمية قبل اتخاذ أي قرار.
+  </div>
+  
 
   <script>
     const chatbox = document.getElementById("chatbox");
     const input = document.getElementById("userInput");
     const typing = document.getElementById("typing");
-    const scrollBtn = document.getElementById("scrollDownBtn");
-
+   
     let latitude = null;
     let longitude = null;
 
@@ -273,6 +270,27 @@
       input.value = text;
       sendMessage();
     }
+    const allSuggestions = [
+     "ما هي الوثائق المطلوبة لحفر بئر؟",
+     "كيف أقدم طلب دعم للمشروع الفلاحي؟",
+     "ما هي إجراءات تأسيس تعاونية فلاحية؟",
+     "كيف أطلب شهادة الاستغلال الفلاحي؟",
+     "ما هي أنواع الدعم الفلاحي المتاحة؟",
+     "هل أحتاج إلى رخصة لحفر ساقية؟",
+     "ما هي الشروط للاستفادة من المخطط الأخضر؟"
+];
+
+// هادي اللي كتدير الخدمة ديال التبديل
+ function handleSuggestionClick(button) {
+   const text = button.textContent;
+   input.value = text;
+   sendMessage();
+
+   // نحيد السؤال لي تضغط عليه ونختار واحد جديد
+   const alternatives = allSuggestions.filter(s => s !== text);
+   const newSuggestion = alternatives[Math.floor(Math.random() * alternatives.length)];
+   button.textContent = newSuggestion;
+}
 
     window.onload = function () {
       if (localStorage.getItem("theme") === "dark") {
@@ -292,29 +310,12 @@
         );
       }
     };
-    let voiceEnabled = true;
-
-function toggleVoice() {
-  voiceEnabled = !voiceEnabled;
-  document.querySelector("button[onclick='toggleVoice()']").textContent =
-    voiceEnabled ? "🔈 الصوت: مفعل" : "🔇 الصوت: معطل";
-}
-
-function speak(text) {
-  if (voiceEnabled && 'speechSynthesis' in window) {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ar-MA';
-    utterance.rate = 1;
-    speechSynthesis.speak(utterance);
-  }
-}
-
-
+    
 
     function addMessage(text, sender) {
   const message = document.createElement("div");
   message.className = "message " + sender;
-  message.style.opacity = 0;
+ 
   chatbox.appendChild(message);
 
   // Effet fade-in
@@ -371,7 +372,7 @@ function speak(text) {
         const data = await res.json();
         typing.style.display = "none";
         addMessage(data.response, "bot");
-        speak(data.response); // 🗣️ Lire la réponse
+  
 
       } catch (err) {
         typing.style.display = "none";
