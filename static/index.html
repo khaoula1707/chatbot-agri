@@ -7,22 +7,28 @@
   <link rel="icon" type="image/png" href="images/favicon.png" />
   <style>
     :root {
-      --bg: #f3f6fa;
-      --chat-bg: #ffffff;
-      --user-msg: #b4e3a9;
-      --bot-msg: #c2feca;
-      --text: #000000;
-      --header: #3c6809;
-    }
+  --bg: #f5f7f3;         
+  --chat-bg: #ffffff;       
+  --user-msg: #d4f4c2;  
+  --bot-msg: #e8fbe5;        
+  --text: #1f1f1f;          
+  --header: #4d7c0f; 
+  --mic-bg: #205072;         
+  --mic-hover: #163c50;         
+ }
 
-    body.dark {
-      --bg: #000000;
-      --chat-bg: #2d2d2d;
-      --user-msg: #011a01;
-      --bot-msg: #032801;
-      --text: #ffffff;
-      --header: #000000;
-    }
+
+  body.dark {
+  --bg: #0d0f0c;            
+  --chat-bg: #1a1d18;     
+  --user-msg: #17401a;      
+  --bot-msg: #1f4a20;     
+  --text: #e5ffe5;          
+  --header: #133c12;  
+  --mic-bg: #2c3e50;         
+  --mic-hover: #1a252f;      
+  }
+
 
     body {
       margin: 0;
@@ -132,8 +138,13 @@
       color: white;
       border: 1px solid #444;
     }
-
-    /* 🌞 Mode clair (par défaut) */
+/*question par défault */
+.suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
 .suggestions button {
   background-color: #f8f8f8;
   color: #292929;
@@ -149,7 +160,7 @@
   background-color: #dddddd;
 }
 
-/* 🌙 Mode sombre */
+
 body.dark .suggestions button {
   background-color: #333333;
   color: #f1f1f1;
@@ -159,35 +170,15 @@ body.dark .suggestions button:hover {
   background-color: #444444;
 }
 
+/*micro */
+.mic-btn {
+  background-color: var(--mic-bg);
+  transition: background-color 0.3s;
+}
 
-    .mic-btn {
-      background-color: #000000;
-    }
-
-    .mic-btn:hover {
-      background-color: #000000;
-    }
-
-    .suggestions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 12px 0;
-    }
-
-    .suggestions button {
-      background-color: #f8f8f8;
-      color: #292929;
-      padding: 8px 14px;
-      font-size: 15px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-    }
-
-    .suggestions button:hover {
-      background-color: #dddddd;
-    }
+.mic-btn:hover {
+  background-color: var(--mic-hover);
+}
 
     .footer-note {
       text-align: center;
@@ -231,7 +222,7 @@ body.dark .suggestions button:hover {
 </head>
 <body>
   <header>
-    <span>💬 مساعد الفلاح</span>
+    <span>مساعد الفلاح</span>
     <div class="buttons">
       <button class="reset-btn" onclick="resetConversation()">🔄</button>
       <button class="toggle-btn" onclick="toggleDarkMode()">🌙</button>
