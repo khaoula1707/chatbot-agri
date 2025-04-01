@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>مساعد الفلاح</title>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="icon" type="image/png" href="image/favicon.png" />
   <style>
     :root {
   --bg: #f5f7f3;         
@@ -208,7 +208,7 @@ body.dark .suggestions button:hover {
   border-radius: 12px;
   padding: 10px 20px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: normal;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
@@ -275,8 +275,7 @@ body.dark .suggestions button:hover {
      
     <div class="input-box">
       <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." />
-      <button class="mic-btn" onclick="startSpeech()" >
-        <img src="mic.svg" alt="Micro" style="width: 22px; height: 22px;" />
+      <button id="micBtn" onclick="startSpeech()">🎤</button>
       </button>      
       <button id="sendBtn" onclick="handleSendOrStop()">إرسال</button>
 
