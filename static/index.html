@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>مساعد الفلاح</title>
-  <link rel="icon" type="image/png" href="static/image/favicon.png"/>
+  <link rel="icon" type="image/png" href="static/image/favicon.jpg"/>
   <style>
     :root {
   --bg: #f5f7f3;         
@@ -282,7 +282,8 @@ body.dark .suggestions button:hover {
      
     <div class="input-box">
       <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." />
-      <button id="micBtn" onclick="startSpeech()">🎤</button>
+      <button id="micBtn" class="mic-btn" onclick="startSpeech()">🎤</button>
+
       </button>      
       <button id="sendBtn" onclick="handleSendOrStop()">إرسال</button>
 
@@ -334,7 +335,6 @@ function updateSendButton(state) {
     const allSuggestions = [
     "ما هي الوثائق المطلوبة لحفر بئر؟",
     "كيف أقدم طلب دعم للمشروع الفلاحي؟",
-    "ما هي إجراءات تأسيس تعاونية فلاحية؟",
     "كيف أطلب شهادة الاستغلال الفلاحي؟",
     "ما هي أنواع الدعم الفلاحي المتاحة؟",
     "هل أحتاج إلى رخصة لحفر ساقية؟",
