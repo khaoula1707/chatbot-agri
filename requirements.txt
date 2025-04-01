@@ -1,5 +1,2 @@
 fastapi
 uvicorn
-requests
-python-multipart
-geopy

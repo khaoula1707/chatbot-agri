@@ -9,17 +9,17 @@
     :root {
       --bg: #f3f6fa;
       --chat-bg: #ffffff;
-      --user-msg: #bafaac;
-      --bot-msg: #adfcb7;
+      --user-msg: #b4e3a9;
+      --bot-msg: #c2feca;
       --text: #000000;
       --header: #3c6809;
     }
 
     body.dark {
       --bg: #000000;
-      --chat-bg: #201f1f;
+      --chat-bg: #2d2d2d;
       --user-msg: #011a01;
-      --bot-msg: #023000;
+      --bot-msg: #032801;
       --text: #ffffff;
       --header: #000000;
     }
@@ -133,26 +133,39 @@
       border: 1px solid #444;
     }
 
-    button {
-      padding: 12px 16px;
-      border-radius: 12px;
-      border: none;
-      background-color: #1e6f5c;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
+    /* 🌞 Mode clair (par défaut) */
+.suggestions button {
+  background-color: #f8f8f8;
+  color: #292929;
+  padding: 8px 14px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 
-    button:hover {
-      background-color: #044334;
-    }
+.suggestions button:hover {
+  background-color: #dddddd;
+}
+
+/* 🌙 Mode sombre */
+body.dark .suggestions button {
+  background-color: #333333;
+  color: #f1f1f1;
+}
+
+body.dark .suggestions button:hover {
+  background-color: #444444;
+}
+
 
     .mic-btn {
-      background-color: #205072;
+      background-color: #000000;
     }
 
     .mic-btn:hover {
-      background-color: #163c50;
+      background-color: #000000;
     }
 
     .suggestions {
@@ -163,8 +176,8 @@
     }
 
     .suggestions button {
-      background-color: #eeeeee;
-      color: #333;
+      background-color: #f8f8f8;
+      color: #292929;
       padding: 8px 14px;
       font-size: 15px;
       border-radius: 10px;
