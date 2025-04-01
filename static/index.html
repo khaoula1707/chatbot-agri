@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>مساعد الفلاح</title>
-  <link rel="icon" type="image/png" href="static/image/favicon.jpg"/>
+  <link rel="icon" type="image/png" href="static/image/favicon.png"/>
   <style>
     :root {
   --bg: #f5f7f3;         
@@ -186,16 +186,20 @@ body.dark .suggestions button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  transition: background-color 0.3s;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
   color: white;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 .mic-btn:hover {
   background-color: var(--mic-hover);
-  transform: scale(1.05);
+  transform: scale(1.1);
+}
+
+.mic-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: white;
 }
 
 
@@ -255,6 +259,25 @@ body.dark .suggestions button:hover {
         padding: 10px 14px;
       }
     }
+
+    .edit-icon {
+  margin-right: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #777;
+  transition: color 0.2s;
+}
+
+.edit-icon:hover {
+  color: #000;
+}
+
+body.dark .edit-icon:hover {
+  color: #fff;
+}
+
+
+
   </style>
 </head>
 <body>
@@ -282,9 +305,12 @@ body.dark .suggestions button:hover {
      
     <div class="input-box">
       <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." />
-      <button id="micBtn" class="mic-btn" onclick="startSpeech()">🎤</button>
-
-      </button>      
+      <button id="micBtn" class="mic-btn" onclick="startSpeech()" aria-label="Microphone">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2Zm-4 6.92V21h-2v-3.08A8.001 8.001 0 0 1 4 11H2a10 10 0 0 0 20 0h-2a8.001 8.001 0 0 1-9 6.92Z"/>
+        </svg>
+      </button>
+         
       <button id="sendBtn" onclick="handleSendOrStop()">إرسال</button>
 
       
@@ -304,6 +330,14 @@ body.dark .suggestions button:hover {
     const typing = document.getElementById("typing");
     let isBotTyping = false;
 
+    function editMessage(icon) {
+  const messageText = icon.parentElement.querySelector(".msg-text").textContent;
+  input.value = messageText;
+  icon.parentElement.remove(); // On supprime le message original pour le remplacer après modif
+}
+
+
+
 function handleSendOrStop() {
   if (isBotTyping) {
     stopTyping();
@@ -315,13 +349,20 @@ function handleSendOrStop() {
 function updateSendButton(state) {
   const btn = document.getElementById("sendBtn");
   if (state === "stop") {
-    btn.textContent = "⛔️";
-    btn.style.backgroundColor = "#b00020";
+    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="black">
+      <rect x="6" y="5" width="4" height="14" />
+      <rect x="14" y="5" width="4" height="14" />
+    </svg>`;
+    btn.style.backgroundColor = "#eee";
   } else {
-    btn.textContent = "إرسال";
-    btn.style.backgroundColor = "#1e6f5c";
+    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+</svg>`;
+    btn.style.backgroundColor = "var(--send-bg)";
+
   }
 }
+
 
     let typingInterval = null;
 
@@ -384,6 +425,19 @@ function updateSendButton(state) {
   const message = document.createElement("div");
   message.className = "message " + sender;
   chatbox.appendChild(message);
+  
+  if (sender === "user") {
+    messageWrapper.innerHTML = `
+      <span class="msg-text">${text}</span>
+      <span class="edit-icon" onclick="editMessage(this)">🖉</span>
+    `;
+  } else {
+    messageWrapper.textContent = text;
+  }
+
+  chatbox.appendChild(messageWrapper);
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
 
   if (sender === "bot") {
     let i = 0;
@@ -404,7 +458,6 @@ function updateSendButton(state) {
     message.innerText = text;
     chatbox.scrollTop = chatbox.scrollHeight;
   }
-}
 
 function stopTyping() {
   if (typingInterval) {
