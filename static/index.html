@@ -14,7 +14,10 @@
   --text: #1f1f1f;          
   --header: #4d7c0f; 
   --mic-bg: #205072;         
-  --mic-hover: #163c50;         
+  --mic-hover: #163c50;  
+  --send-bg: #1e6f5c;
+  --send-hover: #155e4d;
+  --send-text: #ffffff;       
  }
 
 
@@ -26,7 +29,10 @@
   --text: #e5ffe5;          
   --header: #133c12;  
   --mic-bg: #2c3e50;         
-  --mic-hover: #1a252f;      
+  --mic-hover: #1a252f;   
+  --send-bg: #0b3a2d;
+  --send-hover: #18624e;
+  --send-text: #ffffff;   
   }
 
 
@@ -173,12 +179,20 @@ body.dark .suggestions button:hover {
 /*micro */
 .mic-btn {
   background-color: var(--mic-bg);
+  border: none;
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .mic-btn:hover {
   background-color: var(--mic-hover);
 }
+
 
     .footer-note {
       text-align: center;
@@ -187,6 +201,23 @@ body.dark .suggestions button:hover {
       padding: 10px;
     }
  
+    #sendBtn {
+  background-color: var(--send-bg);
+  color: var(--send-text);
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+#sendBtn:hover {
+  background-color: var(--send-hover);
+  transform: scale(1.03);
+}
 
     .scroll-down-btn {
       position: fixed;
@@ -244,7 +275,9 @@ body.dark .suggestions button:hover {
      
     <div class="input-box">
       <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." />
-      <button class="mic-btn" onclick="startSpeech()">🎤</button>
+      <button class="mic-btn" onclick="startSpeech()" >
+        <img src="mic.svg" alt="Micro" style="width: 22px; height: 22px;" />
+      </button>      
       <button id="sendBtn" onclick="handleSendOrStop()">إرسال</button>
 
       
