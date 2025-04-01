@@ -13,8 +13,8 @@
   --bot-msg: #e8fbe5;        
   --text: #1f1f1f;          
   --header: #4d7c0f; 
-  --mic-bg: #1e6f5c;         
-  --mic-hover: #155e4d;  
+  --mic-bg: #205072;
+  --mic-hover: #163c50; 
   --send-bg: #1e6f5c;
   --send-hover: #155e4d;
   --send-text: #ffffff;       
@@ -28,8 +28,8 @@
   --bot-msg: #1f4a20;     
   --text: #e5ffe5;          
   --header: #133c12;  
-  --mic-bg: #0b3a2d;         
-  --mic-hover: #18624e;   
+  --mic-bg: #2e5e75;
+  --mic-hover: #194458;  
   --send-bg: #0b3a2d;
   --send-hover: #18624e;
   --send-text: #ffffff;   
@@ -180,18 +180,24 @@ body.dark .suggestions button:hover {
 .mic-btn {
   background-color: var(--mic-bg);
   border: none;
-  border-radius: 12px;
-  padding: 10px;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 22px;
+  color: white;
+  cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 .mic-btn:hover {
   background-color: var(--mic-hover);
+  transform: scale(1.05);
 }
+
 
 
     .footer-note {
@@ -252,6 +258,7 @@ body.dark .suggestions button:hover {
   </style>
 </head>
 <body>
+  
   <header>
     <span>مساعد الفلاح</span>
     <div class="buttons">
