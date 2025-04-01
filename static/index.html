@@ -4,23 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>مساعد الفلاح</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
   <style>
     :root {
       --bg: #f3f6fa;
       --chat-bg: #ffffff;
-      --user-msg: #d6f5e3;
-      --bot-msg: #e0f0ff;
-      --text: #1a2b4c;
-      --header: #205072;
+      --user-msg: #bafaac;
+      --bot-msg: #adfcb7;
+      --text: #000000;
+      --header: #3c6809;
     }
 
     body.dark {
-      --bg: #121212;
-      --chat-bg: #1e1e1e;
-      --user-msg: #1a365d;
-      --bot-msg: #1c2636;
-      --text: #f1f1f1;
-      --header: #1a202c;
+      --bg: #000000;
+      --chat-bg: #201f1f;
+      --user-msg: #011a01;
+      --bot-msg: #023000;
+      --text: #ffffff;
+      --header: #000000;
     }
 
     body {
@@ -143,7 +144,7 @@
     }
 
     button:hover {
-      background-color: #155e4d;
+      background-color: #044334;
     }
 
     .mic-btn {
@@ -240,8 +241,9 @@
     <div class="input-box">
       <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." />
       <button class="mic-btn" onclick="startSpeech()">🎤</button>
-      <button onclick="sendMessage()">إرسال</button>
-      <button onclick="stopTyping()" id="stopBtn" style="display: none; background-color: #b00020;">⛔️إيقاف الإجابة</button>
+      <button id="sendBtn" onclick="handleSendOrStop()">إرسال</button>
+
+      
     </div>
   </div>
 
@@ -256,6 +258,27 @@
     const chatbox = document.getElementById("chatbox");
     const input = document.getElementById("userInput");
     const typing = document.getElementById("typing");
+    let isBotTyping = false;
+
+function handleSendOrStop() {
+  if (isBotTyping) {
+    stopTyping();
+  } else {
+    sendMessage();
+  }
+}
+
+function updateSendButton(state) {
+  const btn = document.getElementById("sendBtn");
+  if (state === "stop") {
+    btn.textContent = "⛔️ إيقاف الإجابة";
+    btn.style.backgroundColor = "#b00020";
+  } else {
+    btn.textContent = "إرسال";
+    btn.style.backgroundColor = "#1e6f5c";
+  }
+}
+
     let typingInterval = null;
 
     let latitude = null;
@@ -280,11 +303,9 @@
    input.value = text;
    sendMessage();
 
-   // نجيب كل الأسئلة اللي باقية في الأزرار
    const currentSuggestions = Array.from(document.querySelectorAll(".suggestions button"))
                                   .map(btn => btn.textContent);
 
-   // نحيد السؤال لي تضغط عليه ونحيد حتى اللي دجا كاينين باش ما نكررهمش
    const alternatives = allSuggestions.filter(
     s => !currentSuggestions.includes(s) && s !== text
    );
@@ -316,21 +337,23 @@
     };
     
 
-    function addMessage(text, sender) {
+  function addMessage(text, sender) {
   const message = document.createElement("div");
   message.className = "message " + sender;
   chatbox.appendChild(message);
 
   if (sender === "bot") {
     let i = 0;
-    document.getElementById("stopBtn").style.display = "inline-block"; // ✅ إظهار زر الإيقاف
+    isBotTyping = true;
+    updateSendButton("stop");
 
     typingInterval = setInterval(() => {
       message.innerText = text.slice(0, i);
       i++;
       if (i > text.length) {
         clearInterval(typingInterval);
-        document.getElementById("stopBtn").style.display = "none"; // 🔚 إخفاء الزر بعد الانتهاء
+        isBotTyping = false;
+        updateSendButton("send");
       }
       chatbox.scrollTop = chatbox.scrollHeight;
     }, 20);
@@ -339,15 +362,15 @@
     chatbox.scrollTop = chatbox.scrollHeight;
   }
 }
+
 function stopTyping() {
   if (typingInterval) {
     clearInterval(typingInterval);
     typingInterval = null;
-    document.getElementById("stopBtn").style.display = "none";
-    addMessage("⛔️ تم إيقاف الإجابة. يمكنك تعديل سؤالك وإعادة الإرسال.", "bot");
-  }
+    isBotTyping = false;
+    updateSendButton("send");
+    }
 }
-
 
 
     function scrollToBottom() {
@@ -430,7 +453,7 @@ function stopTyping() {
         credentials: "include"
       });
       chatbox.innerHTML = "";
-      addMessage("💬 تم بدء محادثة جديدة.", "bot");
+      
     }
   </script>
 </body>
