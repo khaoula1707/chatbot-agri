@@ -333,8 +333,9 @@ body.dark .edit-icon:hover {
     function editMessage(icon) {
   const messageText = icon.parentElement.querySelector(".msg-text").textContent;
   input.value = messageText;
-  icon.parentElement.remove(); // On supprime le message original pour le remplacer après modif
+  icon.parentElement.remove(); // Supprimer l'ancien message
 }
+
 
 
 
@@ -421,31 +422,25 @@ function updateSendButton(state) {
     };
     
 
-  function addMessage(text, sender) {
-  const message = document.createElement("div");
-  message.className = "message " + sender;
-  chatbox.appendChild(message);
-  
+    function addMessage(text, sender) {
+  const messageWrapper = document.createElement("div");
+  messageWrapper.className = "message " + sender;
+
   if (sender === "user") {
     messageWrapper.innerHTML = `
       <span class="msg-text">${text}</span>
       <span class="edit-icon" onclick="editMessage(this)">🖉</span>
     `;
-  } else {
-    messageWrapper.textContent = text;
-  }
-
-  chatbox.appendChild(messageWrapper);
-  chatbox.scrollTop = chatbox.scrollHeight;
-}
-
-  if (sender === "bot") {
+  } else if (sender === "bot") {
     let i = 0;
     isBotTyping = true;
     updateSendButton("stop");
 
+    const span = document.createElement("span");
+    messageWrapper.appendChild(span);
+
     typingInterval = setInterval(() => {
-      message.innerText = text.slice(0, i);
+      span.innerText = text.slice(0, i);
       i++;
       if (i > text.length) {
         clearInterval(typingInterval);
@@ -454,10 +449,11 @@ function updateSendButton(state) {
       }
       chatbox.scrollTop = chatbox.scrollHeight;
     }, 20);
-  } else {
-    message.innerText = text;
-    chatbox.scrollTop = chatbox.scrollHeight;
   }
+
+  chatbox.appendChild(messageWrapper);
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
 
 function stopTyping() {
   if (typingInterval) {
