@@ -306,7 +306,19 @@
      }
     body.dark .edit-btn:hover {
       color: #fff;
-}
+      .save-btn {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      margin-right: 8px;
+      padding: 0;
+      transition: transform 0.2s ease;
+      }
+    .save-btn:hover {
+      transform: scale(1.2);
+     }
+
+    }
 /* note d’avertissement */
      .footer-note {
       text-align: center;
@@ -314,6 +326,9 @@
       color: #777;
       padding: 10px;
     }
+
+
+    
   </style>
 </head>
 <!-- Structure globale de la page -->
@@ -391,12 +406,15 @@ function editMessage(icon) {
   input.style.marginTop = "5px";
   // Créer le bouton de validation 
   const saveBtn = document.createElement("button");
-  saveBtn.textContent = "✔️";
+  saveBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 24 24" fill="#4CAF50"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>`;
   saveBtn.style.marginRight = "8px";
   saveBtn.style.cursor = "pointer";
   saveBtn.style.background = "transparent";
   saveBtn.style.border = "none";
   saveBtn.style.fontSize = "18px";
+  saveBtn.className = "save-btn";
+  input.style.boxShadow = "0 0 4px rgba(0, 0, 0, 0.1)";
+  input.style.fontSize = "16px";
   //  Comportement au clic sur ✔️
   saveBtn.onclick = () => {
     msgTextSpan.textContent = input.value;
@@ -456,7 +474,7 @@ function editMessage(icon) {
   function handleSuggestionClick(button) {
    const text = button.textContent;
    input.value = text;
-   sendMessage();
+   handleSendOrStop();
    const currentSuggestions = Array.from(document.querySelectorAll(".suggestions button"))
                                   .map(btn => btn.textContent);
 
