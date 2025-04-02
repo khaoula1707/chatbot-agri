@@ -124,7 +124,7 @@ async def chat(request: Request):
 
             "temperature": 0.5
         },
-        timeout=10
+      
     )
     # Traitement de la réponse
     result = response.json()
