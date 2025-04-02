@@ -243,6 +243,16 @@
       height: 24px;
       fill: white;
     }
+     .mic-btn.recording {
+      background-color: red !important;
+       animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+     0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5); }
+     70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+     100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+}
+
 /*Bouton envoyer */
      #sendBtn {
       background-color: var(--send-bg);
@@ -285,8 +295,8 @@
 /* Stylo de modification*/
      .edit-btn {
       position: absolute;
-      bottom: 8px;
-      left: 8px;
+      bottom: 50px;
+      right: 8px;
       background: transparent;
       border: none;
       font-size: 18px;
@@ -307,19 +317,17 @@
       color: #fff;
 }
 /* note d’avertissement */
-.footer-note {
+     .footer-note {
       text-align: center;
       font-size: 12px;
       color: #777;
       padding: 10px;
     }
-
-
-
-
   </style>
 </head>
-<body>
+<!-- Structure globale de la page -->
+<body> 
+
   <header>
     <span>مساعد الفلاح</span>
     <div class="buttons">
@@ -328,80 +336,101 @@
   </header>
 
   <div class="main">
-    
+<!-- Bouton de réinitialisation de la conversation-->
     <button class="reset-btn-floating" onclick="resetConversation()" title="إعادة المحادثة">
       <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" fill="white" viewBox="0 0 24 24">
         <path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-5 5 5 5 0 0 1-4.9-4h-2.02c.47 3.39 3.39 6 6.92 6 3.87 0 7-3.13 7-7s-3.13-7-7-7z"/>
       </svg>
     </button>
-    
+<!-- Zone principale chat-->
     <div class="chatbox" id="chatbox">
-    
     </div>
-    
-    
-    
+<!-- Suggestions de questions -->        
     <div class="suggestions" id="suggestions">
       <button onclick="handleSuggestionClick(this)">ما هي الوثائق المطلوبة لحفر بئر؟</button>
       <button onclick="handleSuggestionClick(this)">ما هي إجراءات تأسيس تعاونية فلاحية؟</button>
       <button onclick="handleSuggestionClick(this)">ما هي أنواع الدعم الفلاحي المتاحة؟</button>
     </div>
-    
-   
-
+<!-- Indicateur de chargement-->     
     <div class="typing-indicator" id="typing" style="display: none;">🕐 جاري إعداد الإجابة...</div>
-     
+<!--  Zone de saisie + microphone + envoyer-->       
     <div class="input-box">
       <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." />
       <button id="micBtn" class="mic-btn" onclick="startSpeech()" aria-label="Microphone">
         <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2Zm-4 6.92V21h-2v-3.08A8.001 8.001 0 0 1 4 11H2a10 10 0 0 0 20 0h-2a8.001 8.001 0 0 1-9 6.92Z"/>
         </svg>
-      </button>
-         
+      </button>  
       <button id="sendBtn" onclick="handleSendOrStop()">
-       
         <svg class="send-icon" width="20" height="20" viewBox="0 0 24 24" fill="white" style="transform: rotate(180deg);" xmlns="http://www.w3.org/2000/svg">
           <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
         </svg>
-      </button>
-      
-      
-      
+      </button>    
     </div>
   </div>
 
-  
-
+<!--  Avertissement final (note de bas de page)--> 
   <div class="footer-note">
      قد يُصدر مساعد الفلاح إجابات غير دقيقة أحيانًا. يُفضل دائمًا التحقق من المعلومات الرسمية قبل اتخاذ أي قرار.
   </div>
   
 
   <script>
+// Initialisation des éléments HTML et variables de base
     const chatbox = document.getElementById("chatbox");
     const input = document.getElementById("userInput");
     const typing = document.getElementById("typing");
     let isBotTyping = false;
+    let typingInterval = null;
+// Modifier un ancien message.
+function editMessage(icon) {
+  const messageDiv = icon.parentElement;
+  const msgTextSpan = messageDiv.querySelector(".msg-text");
+  const oldText = msgTextSpan.textContent;
+  msgTextSpan.style.display = "none";
+  icon.style.display = "none";
+  // Créer un champ de saisie 
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = oldText;
+  input.style.width = "80%";
+  input.style.padding = "5px";
+  input.style.borderRadius = "8px";
+  input.style.border = "1px solid #ccc";
+  input.style.marginTop = "5px";
+  // Créer le bouton de validation 
+  const saveBtn = document.createElement("button");
+  saveBtn.textContent = "✔️";
+  saveBtn.style.marginRight = "8px";
+  saveBtn.style.cursor = "pointer";
+  saveBtn.style.background = "transparent";
+  saveBtn.style.border = "none";
+  saveBtn.style.fontSize = "18px";
+  //  Comportement au clic sur ✔️
+  saveBtn.onclick = () => {
+    msgTextSpan.textContent = input.value;
+    msgTextSpan.style.display = "inline";
+    icon.style.display = "inline-block";
+    input.remove();
+    saveBtn.remove();
+  };
 
-    function editMessage(icon) {
-  const messageText = icon.parentElement.querySelector(".msg-text").textContent;
-  input.value = messageText;
-  icon.parentElement.remove(); // Supprimer l’ancien message
+  messageDiv.appendChild(input);
+  messageDiv.appendChild(saveBtn);
 }
 
-function handleSendOrStop() {
+// Gère le bouton envoyer
+    function handleSendOrStop() {
   if (isBotTyping) {
     stopTyping();
   } else {
     sendMessage();
   }
 }
-
-function updateSendButton(state) {
+// Change dynamiquement l'icône et la couleur
+    function updateSendButton(state) {
   const btn = document.getElementById("sendBtn");
   if (state === "stop") {
-    
     btn.innerHTML = `
       <svg width="20" height="20" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg">
         <rect x="6" y="5" width="4" height="14" />
@@ -410,7 +439,6 @@ function updateSendButton(state) {
     `;
     btn.style.backgroundColor = "#eee";
   } else {
-    
     btn.innerHTML = `
       <svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="transform: rotate(180deg);" xmlns="http://www.w3.org/2000/svg">
         <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
@@ -419,15 +447,12 @@ function updateSendButton(state) {
     btn.style.backgroundColor = "var(--send-bg)";
   }
 }
-
-
-
-    let typingInterval = null;
-
-    function fillSuggestion(text) {
+// Remplit automatiquement le champ 
+  function fillSuggestion(text) {
       input.value = text;
       sendMessage();
     }
+// Liste de questions rapides 
     const allSuggestions = [
     "ما هي الوثائق المطلوبة لحفر بئر؟",
     "كيف أقدم طلب دعم للمشروع الفلاحي؟",
@@ -436,12 +461,11 @@ function updateSendButton(state) {
     "هل أحتاج إلى رخصة لحفر ساقية؟",
     "ما هي الشروط للاستفادة من المخطط الأخضر؟"
 ];
-
- function handleSuggestionClick(button) {
+// Remplacement dynamique
+  function handleSuggestionClick(button) {
    const text = button.textContent;
    input.value = text;
    sendMessage();
-
    const currentSuggestions = Array.from(document.querySelectorAll(".suggestions button"))
                                   .map(btn => btn.textContent);
 
@@ -455,15 +479,8 @@ function updateSendButton(state) {
   }
 }
 
-
-    window.onload = function () {
-      if (localStorage.getItem("theme") === "dark") {
-        document.body.classList.add("dark");
-        document.querySelector(".toggle-btn").textContent = "☀️";
-      }
-    };
     
-
+// Création d’un message
     function addMessage(text, sender) {
   const messageWrapper = document.createElement("div");
   messageWrapper.className = "message " + sender;
@@ -480,11 +497,10 @@ function updateSendButton(state) {
     let i = 0;
     isBotTyping = true;
     updateSendButton("stop");
-
+// Affichage du texte progressivement
     const span = document.createElement("span");
     messageWrapper.appendChild(span);
     chatbox.appendChild(messageWrapper);
-
     typingInterval = setInterval(() => {
       span.innerText = text.slice(0, i);
       i++;
@@ -494,16 +510,14 @@ function updateSendButton(state) {
         updateSendButton("send");
       }
       chatbox.scrollTop = chatbox.scrollHeight;
-    }, 20);
+    }, 15);
   }
 }
-
-
   chatbox.appendChild(messageWrapper);
   chatbox.scrollTop = chatbox.scrollHeight;
 
-
-function stopTyping() {
+// Interrompt l’animation d’écriture
+  function stopTyping() {
   if (typingInterval) {
     clearInterval(typingInterval);
     typingInterval = null;
@@ -511,32 +525,26 @@ function stopTyping() {
     updateSendButton("send");
     }
 }
-
-
+// Défilement automatiquement de la boîte de chat
     function scrollToBottom() {
       chatbox.scrollTop = chatbox.scrollHeight;
     }
-
-    chatbox.addEventListener("scroll", () => {
-      const nearBottom = chatbox.scrollTop + chatbox.clientHeight >= chatbox.scrollHeight - 100;
-      scrollBtn.style.display = nearBottom ? "none" : "block";
-    });
-
+    
+// Récupère le message écrit par l'utilisateur
     async function sendMessage() {
   const userText = input.value.trim();
   if (!userText) return;
-
   addMessage(userText, "user");
   input.value = "";
   typing.style.display = "block";
-
+//  Appel au backend
   try {
     const res = await fetch("https://chatbot-agri-production.up.railway.app/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      credentials: "include", // pour garder le session_id
+      credentials: "include", 
       body: JSON.stringify({ message: userText })
     });
 
@@ -551,42 +559,81 @@ function stopTyping() {
   }
 }
 
-
+// Envoyer le msg par clavier 
     input.addEventListener("keydown", function (event) {
       if (event.key === "Enter") {
         event.preventDefault();
         sendMessage();
       }
     });
+// Activation automatique du mode sombre ou claire au chargement
 
+window.onload = function () {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+        document.querySelector(".toggle-btn").textContent = "☀️";
+      }
+    };
+// Basculer entre sombre et clair manuellement
     function toggleDarkMode() {
       document.body.classList.toggle("dark");
       const btn = document.querySelector(".toggle-btn");
       btn.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
       localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
     }
+//  Reconnaissance vocale avec Web Speech API   
+let mediaRecorder;
+let audioChunks = [];
 
-    function startSpeech() {
-      if (!('webkitSpeechRecognition' in window)) {
-        alert("🎤 المتصفح لا يدعم خاصية الصوت.");
-        return;
-      }
-      const recognition = new webkitSpeechRecognition();
-      recognition.lang = 'ar-MA';
-      recognition.onresult = function (event) {
-        const transcript = event.results[0][0].transcript;
-        if (transcript.includes("بير") || transcript.includes("بئر")) {
-          input.value = "ما هي الوثائق المطلوبة لحفر بئر؟";
-        } else if (transcript.includes("مشروع") || transcript.includes("استثمار")) {
-          input.value = "كيف أطلب ترخيص لمشروع فلاحي؟";
-        } else {
-          input.value = transcript;
+async function startSpeech() {
+  const micBtn = document.getElementById("micBtn");
+
+  // Demande l'autorisation d'utiliser le micro
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = event => {
+      audioChunks.push(event.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+      const formData = new FormData();
+      formData.append("file", audioBlob, "voice.wav");
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/transcribe", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json();
+        input.value = data.text || "";
+        if (data.text && data.text.trim() !== "") {
+          sendMessage();
         }
-        sendMessage();
-      };
-      recognition.start();
-    }
 
+      } catch (error) {
+        console.error("Erreur transcription :", error);
+        alert("⚠️ تعذر تفريغ الصوت. حاول مرة أخرى.");
+      }
+    };
+
+    mediaRecorder.start();
+
+    micBtn.classList.add("recording");
+    setTimeout(() => {
+      mediaRecorder.stop();
+      micBtn.classList.remove("recording");
+    }, 5000); // يسجل لمدة 5 ثواني فقط
+
+  } catch (error) {
+    alert("🎤 تعذر الوصول إلى الميكروفون. تأكد من السماح.");
+    console.error("Erreur micro :", error);
+  }
+}
     async function resetConversation() {
   // Reset on the server
   await fetch("https://chatbot-agri-production.up.railway.app/reset", {

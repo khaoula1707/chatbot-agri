@@ -2,6 +2,10 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi import UploadFile, File
+from vosk import Model, KaldiRecognizer
+import wave
+import json
 from fastapi import status
 import requests
 import os
@@ -158,3 +162,33 @@ async def reset_conversation(request: Request):
         samesite="Lax"
     )
     return response
+
+
+# Charger le modèle Vosk une fois
+vosk_model = Model("model/vosk-model-small-ar-0.22")
+
+@app.post("/transcribe")
+async def transcribe_audio(file: UploadFile = File(...)):
+    # Sauvegarde temporaire du fichier
+    audio_path = "temp.wav"
+    with open(audio_path, "wb") as f:
+        f.write(await file.read())
+
+    # Lecture et transcription
+    wf = wave.open(audio_path, "rb")
+    rec = KaldiRecognizer(vosk_model, wf.getframerate())
+
+    text = ""
+    while True:
+        data = wf.readframes(4000)
+        if len(data) == 0:
+            break
+        if rec.AcceptWaveform(data):
+            result = json.loads(rec.Result())
+            text += result.get("text", "") + " "
+
+    final_result = json.loads(rec.FinalResult())
+    text += final_result.get("text", "")
+
+    os.remove(audio_path)
+    return {"text": text.strip()}
