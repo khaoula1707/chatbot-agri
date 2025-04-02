@@ -524,25 +524,34 @@ function stopTyping() {
     });
 
     async function sendMessage() {
-      const userText = input.value.trim();
-      if (!userText) return;
+  const userText = input.value.trim();
+  if (!userText) return;
 
-      addMessage(userText, "user");
-      input.value = "";
-      typing.style.display = "block";
+  addMessage(userText, "user");
+  input.value = "";
+  typing.style.display = "block";
 
-      try {
-        
-        const data = await res.json();
-        typing.style.display = "none";
-        addMessage(data.response, "bot");
-  
+  try {
+    const res = await fetch("https://chatbot-agri-production.up.railway.app/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include", // pour garder le session_id
+      body: JSON.stringify({ message: userText })
+    });
 
-      } catch (err) {
-        typing.style.display = "none";
-        addMessage("⚠️ حدث خطأ أثناء الاتصال بالخادم.", "bot");
-      }
-    }
+    const data = await res.json();
+    typing.style.display = "none";
+    addMessage(data.response, "bot");
+
+  } catch (err) {
+    typing.style.display = "none";
+    addMessage("⚠️ حدث خطأ أثناء الاتصال بالخادم.", "bot");
+    console.error("Erreur de connexion :", err);
+  }
+}
+
 
     input.addEventListener("keydown", function (event) {
       if (event.key === "Enter") {
