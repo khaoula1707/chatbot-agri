@@ -132,6 +132,9 @@ async def chat(request: Request):
     conversations[session_id].append({"role": "user", "content": user_message})
 
     # 🚀 API DeepSeek
+    messages_to_send = conversations[session_id][:1] + conversations[session_id][-6:]
+
+
     response = requests.post(
         "https://api.deepseek.com/chat/completions",
         headers={
@@ -140,8 +143,9 @@ async def chat(request: Request):
         },
         json={
             "model": "deepseek-chat",
-            "messages": conversations[session_id],
-            "temperature": 0.7
+            "messages": messages_to_send,
+
+            "temperature": 0.5
         }
     )
 
