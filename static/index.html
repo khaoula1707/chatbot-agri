@@ -62,7 +62,6 @@
       display: flex;
       gap: 8px;
     }
-
 /* Boutons réinitialisation */
    .reset-btn-floating {
     background-color: var(--header);
@@ -80,24 +79,27 @@
    @media (min-width: 768px) {
    .reset-btn-floating {
     position: absolute;
+    width: 38px;
+    height: 38px;
     top: 100px;
     left: 240px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    border: none;
     }
    }
    @media (max-width: 767px) {
    .reset-btn-floating {
     position: absolute;
+    width: 45px;
+    height: 45px;
     top: 12px;
     left: 80px; 
-    
+    border: black;
    }
   }
    .reset-btn-floating:hover {
     filter: brightness(1.4);
   }
-
-
 /* Div principale */
     .main {
       flex: 1;
@@ -123,7 +125,6 @@
       align-items: flex-start;
       position: relative; 
  }
-
 /* Bulle de message  */
     .message {
       padding: 12px 18px;
@@ -181,7 +182,7 @@
       color: white;
       border: 1px solid #444;
     }
- /* Bouton du mode sombre et claire */
+/* Bouton du mode sombre et claire */
     .toggle-btn {
      background-color: var(--header); 
      color: white; 
@@ -195,7 +196,6 @@
     .toggle-btn:hover {
       filter: brightness(1.1); 
     }
-
 /* Boutons de questions rapides */
     .suggestions {
       display: flex;
@@ -220,7 +220,6 @@
       background-color: #333333;
       color: #f1f1f1;
     }
-
 /*Bouton de micro */
    .mic-btn {
       background-color: var(--mic-bg);
@@ -308,7 +307,7 @@
 body.dark .edit-btn:hover {
   color: #fff;
 }
-note d’avertissement
+/* note d’avertissement */
 .footer-note {
       text-align: center;
       font-size: 12px;
