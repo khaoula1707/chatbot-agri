@@ -7,8 +7,7 @@ import os
 import json
 import uuid
 import difflib
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut
+
 
 app = FastAPI()
 
@@ -44,35 +43,19 @@ def charger_donnees_demarches():
                     demarches.append(contenu)
     return demarches
 
-# 🗺️ Reverse Geocoding
-geolocator = Nominatim(user_agent="farmer_assistant")
-
-def reverse_geocode(lat, lon):
-    try:
-        location = geolocator.reverse((lat, lon), language="ar")
-        return location.address if location else None
-    except GeocoderTimedOut:
-        return None
-
 
 # 💬 Route principale du chatbot
 @app.post("/chat")
 async def chat(request: Request):
     data = await request.json()
     user_message = data.get("message")
-    location = data.get("location", {})
-    lat = location.get("latitude")
-    lon = location.get("longitude")
+   
 
     session_id = request.cookies.get("session_id")
     if not session_id:
         session_id = str(uuid.uuid4())
 
-    print("📩 Message reçu:", user_message)
-    print("📍 Coordonnées:", lat, lon)
-
-    location_name = reverse_geocode(lat, lon) if lat and lon else None
-
+    
     # 🔍 Recherche améliorée
     contexte = ""
     source = "🔵 تم توليد هذه الإجابة من نموذج الذكاء الاصطناعي."
@@ -107,8 +90,6 @@ async def chat(request: Request):
 
 ✅ إذا كانت معلومات المستخدم غير كافية، فلا تعطه جوابًا مباشرًا. اسأله أسئلة متابعة للحصول على التفاصيل الناقصة (مثل الموقع، نوع الأرض، نوع المشروع، الجهة المسؤولة، إلخ).
 
-✅ إذا كانت إحداثيات الموقع متوفرة، استعملها لتقديم إجابة مناسبة حسب المنطقة.
-
 ✅ بعد الحصول على كل المعلومات الضرورية، قدّم له جوابًا منظمًا باستخدام فقرات قصيرة وعناوين واضحة وقوائم مرقّمة عند الحاجة.
 
 ❌ لا تستخدم رموز Markdown أو HTML. فقط نص بسيط ومنظم باللغة العربية.
@@ -120,11 +101,6 @@ async def chat(request: Request):
     else:
         conversations[session_id][0]["content"] = system_prompt
 
-    if location_name:
-        conversations[session_id].append({
-            "role": "system",
-            "content": f"📍 موقع المستخدم: {location_name}"
-        })
 
     if contexte:
         conversations[session_id].append({"role": "system", "content": f"معلومات من الملفات:\n{contexte}"})
@@ -132,7 +108,7 @@ async def chat(request: Request):
     conversations[session_id].append({"role": "user", "content": user_message})
 
     # 🚀 API DeepSeek
-    messages_to_send = conversations[session_id][:1] + conversations[session_id][-6:]
+    messages_to_send = conversations[session_id][:1] + conversations[session_id][-4:]
 
 
     response = requests.post(
@@ -146,7 +122,8 @@ async def chat(request: Request):
             "messages": messages_to_send,
 
             "temperature": 0.5
-        }
+        },
+        timeout=10
     )
 
     result = response.json()
