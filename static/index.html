@@ -426,7 +426,6 @@
   if (sender === "user") {
     messageWrapper.innerHTML = `
       <span class="msg-text">${text}</span>
-      <button class="edit-btn" onclick="editMessage(this)" title="تعديل الرسالة">🖉</button>
     `;
     chatbox.appendChild(messageWrapper);
     chatbox.scrollTop = chatbox.scrollHeight;
