@@ -126,21 +126,19 @@
       position: relative; 
  }
 /* Bulle de message  */
-    .message {
+     .message {
       padding: 12px 18px;
       border-radius: 18px;
       line-height: 1.6;
       white-space: pre-wrap;
       direction: rtl;
-      display: inline-block; 
-      max-height: auto; 
+      display: inline-block;
       max-width: 80%; 
       width: fit-content;
-      max-height: 200px;  
-      overflow: hidden;
-      overflow-wrap: break-word;
+      word-wrap: break-word; 
+      height: auto; 
+}
 
-    }
 /* Utulisateur */
     .user {
       background-color: var(--user-msg);
@@ -477,10 +475,10 @@ function editMessage(icon) {
 ];
 // Remplacement dynamique
   function handleSuggestionClick(button) {
-   const text = button.textContent;
-   input.value = text;
-   handleSendOrStop();
-   const currentSuggestions = Array.from(document.querySelectorAll(".suggestions button"))
+    const text = button.textContent;
+    input.value = text;
+    sendMessage();  
+    const currentSuggestions = Array.from(document.querySelectorAll(".suggestions button"))
                                   .map(btn => btn.textContent);
 
    const alternatives = allSuggestions.filter(
