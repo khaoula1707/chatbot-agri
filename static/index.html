@@ -72,9 +72,6 @@
 
 
 .reset-btn-floating {
-  position: absolute;
-  top: 100px;
-  left: 240px;
   background-color: var(--header);
   border: none;
   border-radius: 50%;
@@ -87,6 +84,22 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   z-index: 100;
   transition: background-color 0.3s ease;
+}
+@media (min-width: 768px) {
+  .reset-btn-floating {
+    position: absolute;
+    top: 100px;
+    left: 240px;
+  }
+}
+
+
+@media (max-width: 767px) {
+  .reset-btn-floating {
+    position: absolute;
+    top: 12px;
+    left: 40px; 
+  }
 }
 
 .reset-btn-floating:hover {
@@ -636,23 +649,23 @@ function stopTyping() {
     }
 
     async function resetConversation() {
+  // Reset on the server
   await fetch("https://chatbot-agri-production.up.railway.app/reset", {
     method: "POST",
     credentials: "include"
   });
-
   chatbox.innerHTML = "";
   typing.style.display = "none";
   input.value = "";
   updateSendButton("send");
   document.getElementById("suggestions").style.display = "flex";
-
   if (typingInterval) {
-   clearInterval(typingInterval);
-   typingInterval = null;
-   isBotTyping = false;
+    clearInterval(typingInterval);
+    typingInterval = null;
+  }
+  isBotTyping = false;
 }
-}
+
 
   </script>
 </body>
