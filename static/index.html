@@ -6,6 +6,7 @@
   <title>مساعد الفلاح</title>
   <link rel="icon" type="image/png" href="static/image/favicon.png"/>
   <style>
+/* Version claire .*/
     :root {
   --bg: #f5f7f3;         
   --chat-bg: #ffffff;       
@@ -19,7 +20,7 @@
   --send-hover: #4d7c0f;
   --send-text: #ffffff;       
  }
-
+/* Version sombre.*/
 
   body.dark {
   --bg: #0d0f0c;            
@@ -35,7 +36,8 @@
   --send-text: #ffffff;   
   }
 
-
+/* La page entière.*/
+  
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -45,7 +47,7 @@
       display: flex;
       flex-direction: column;
     }
-
+/* L’en-tête . */
     header {
       background-color: var(--header);
       color: white;
@@ -55,59 +57,48 @@
       justify-content: space-between;
       align-items: center;
     }
-
+/* Boutons dans la barre d'en-tête */
     .buttons {
       display: flex;
       gap: 8px;
     }
 
-    .top-actions {
-  width: 100%;
-  max-width: 900px;
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 8px;
-  padding: 0 10px;
-}
-
-
-.reset-btn-floating {
-  background-color: var(--header);
-  border: none;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  z-index: 100;
-  transition: background-color 0.3s ease;
-}
-@media (min-width: 768px) {
-  .reset-btn-floating {
+/* Boutons réinitialisation */
+   .reset-btn-floating {
+    background-color: var(--header);
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    transition: background-color 0.3s ease;
+   }
+   @media (min-width: 768px) {
+   .reset-btn-floating {
     position: absolute;
     top: 100px;
     left: 240px;
-  }
-}
-
-
-@media (max-width: 767px) {
-  .reset-btn-floating {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+   }
+   @media (max-width: 767px) {
+   .reset-btn-floating {
     position: absolute;
     top: 12px;
-    left: 100px; 
+    left: 80px; 
+    
+   }
   }
-}
-
-.reset-btn-floating:hover {
-  filter: brightness(1.1);
-}
+   .reset-btn-floating:hover {
+    filter: brightness(1.4);
+  }
 
 
-
+/* Div principale */
     .main {
       flex: 1;
       display: flex;
@@ -116,7 +107,7 @@
       padding: 10px;
       overflow: hidden;
     }
-
+/* Boîte de discussion */
     .chatbox {
       width: 100%;
       max-width: 900px;
@@ -133,7 +124,7 @@
       position: relative; 
  }
 
-    
+/* Bulle de message  */
     .message {
       padding: 12px 18px;
       border-radius: 18px;
@@ -145,25 +136,25 @@
       max-width: 100%; 
       width: fit-content;
     }
-
+/* Utulisateur */
     .user {
       background-color: var(--user-msg);
       align-self: flex-end;
       text-align: right;
     }
-
+/* Chat */
     .bot {
       background-color: var(--bot-msg);
       align-self: flex-start;
       text-align: right;
     }
-
+/* Indicateur de saisie du bot */
     .typing-indicator {
       font-size: 15px;
       color: #999;
       padding: 8px;
     }
-
+/* Boîte d'entrée de message  */
     .input-box {
       position: sticky;
       bottom: 0;
@@ -175,7 +166,7 @@
       padding: 10px;
       z-index: 10;
     }
-
+/*  Champ de saisie mode claire */
     input {
       flex: 1;
       padding: 12px;
@@ -184,181 +175,146 @@
       font-size: 16px;
       outline: none;
     }
-
+/*  Champ de saisie mode sombre */
     body.dark input {
       background-color: #2a2a2a;
       color: white;
       border: 1px solid #444;
     }
-
+ /* Bouton du mode sombre et claire */
     .toggle-btn {
-  background-color: var(--header); 
-  color: white; 
-  border: none;
-  border-radius: 5px;
-  padding: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
-}
+     background-color: var(--header); 
+     color: white; 
+     border: none;
+     border-radius: 5px;
+     padding: 8px;
+     cursor: pointer;
+     font-size: 16px;
+     transition: background-color 0.3s;
+    }
+    .toggle-btn:hover {
+      filter: brightness(1.1); 
+    }
 
-
-.toggle-btn:hover {
-  filter: brightness(1.1); 
-}
-
-/*question par défault */
-.suggestions {
+/* Boutons de questions rapides */
+    .suggestions {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin: 12px 0;
     }
-.suggestions button {
-  background-color: #f8f8f8;
-  color: #292929;
-  padding: 8px 14px;
-  font-size: 15px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.suggestions button:hover {
-  background-color: #dddddd;
-}
-
-
-body.dark .suggestions button {
-  background-color: #333333;
-  color: #f1f1f1;
-}
-
-body.dark .suggestions button:hover {
-  background-color: #444444;
-}
-
-/*micro */
-.mic-btn {
-  background-color: var(--mic-bg);
-  border: none;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-  color: white;
-}
-
-.mic-btn:hover {
-  background-color: var(--mic-hover);
-  transform: scale(1.1);
-}
-
-.mic-btn svg {
-  width: 24px;
-  height: 24px;
-  fill: white;
-}
-
-
-
-    .footer-note {
-      text-align: center;
-      font-size: 12px;
-      color: #777;
-      padding: 10px;
-    }
- 
-    #sendBtn {
-  background-color: var(--send-bg);
-  color: var(--send-text);
-  border: none;
-  border-radius: 12px;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: normal;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  direction: rtl;
-}
-
-#sendBtn:hover {
-  background-color: var(--send-hover);
-  transform: scale(1.03);
-}
-
-    .scroll-down-btn {
-      position: fixed;
-      bottom: 85px;
-      right: 20px;
-      background-color: #205072;
-      color: white;
+    .suggestions button {
+      background-color: #f8f8f8;
+      color: #292929;
+      padding: 8px 14px;
+      font-size: 15px;
+      border-radius: 10px;
       border: none;
-      border-radius: 30px;
-      padding: 8px 16px;
-      font-size: 14px;
       cursor: pointer;
-      display: none;
-      z-index: 99;
+      transition: background-color 0.3s;
     }
+    .suggestions button:hover {
+      background-color: #dddddd;
+    }
+    body.dark .suggestions button {
+      background-color: #333333;
+      color: #f1f1f1;
+    }
+
+/*Bouton de micro */
+   .mic-btn {
+      background-color: var(--mic-bg);
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+     color: white;
+    }
+    .mic-btn:hover {
+      background-color: var(--mic-hover);
+      transform: scale(1.1);
+    }
+    .mic-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+/*Bouton envoyer */
+     #sendBtn {
+      background-color: var(--send-bg);
+      color: var(--send-text);
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: normal;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      direction: rtl;
+    }
+     #sendBtn:hover {
+      background-color: var(--send-hover);
+      transform: scale(1.03);
+    }
+/*Responsive design (version mobile) */
     @media (max-width: 600px) {
       .chatbox, .input-box {
         max-width: 100%;
         border-radius: 0;
         padding: 10px;
       }
-
       input {
         font-size: 14px;
       }
-
       button {
         font-size: 14px;
         padding: 10px 14px;
       }
     }
-
     .message.user {
-  position: relative;
-}
-
-.edit-btn {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: transparent;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  display: none;
-  color: #666;
-}
-
-.message.user:hover .edit-btn {
-  display: inline-block;
-}
-
-body.dark .edit-btn {
-  color: #bbb;
-}
-
-.edit-btn:hover {
-  color: #000;
-}
+      position: relative;
+    }
+/* Stylo de modification*/
+     .edit-btn {
+      position: fixed;
+      bottom: 8px;
+      left: 8px;
+      background: transparent;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      display: none;
+      color: #666;
+    }
+     .message.user:hover .edit-btn {
+       display: inline-block;
+    }
+     body.dark .edit-btn {
+      color: #bbb;
+     }
+    .edit-btn:hover {
+      color: #000;
+     }
 
 body.dark .edit-btn:hover {
   color: #fff;
 }
-
+note d’avertissement
+.footer-note {
+      text-align: center;
+      font-size: 12px;
+      color: #777;
+      padding: 10px;
+    }
 
 
 
@@ -447,7 +403,7 @@ function handleSendOrStop() {
 function updateSendButton(state) {
   const btn = document.getElementById("sendBtn");
   if (state === "stop") {
-    // أيقونة الإيقاف المؤقت ⏸️
+    
     btn.innerHTML = `
       <svg width="20" height="20" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg">
         <rect x="6" y="5" width="4" height="14" />
@@ -456,7 +412,7 @@ function updateSendButton(state) {
     `;
     btn.style.backgroundColor = "#eee";
   } else {
-    // أيقونة إرسال تشير لليسار ⬅️
+    
     btn.innerHTML = `
       <svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="transform: rotate(180deg);" xmlns="http://www.w3.org/2000/svg">
         <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
@@ -469,9 +425,6 @@ function updateSendButton(state) {
 
 
     let typingInterval = null;
-
-    let latitude = null;
-    let longitude = null;
 
     function fillSuggestion(text) {
       input.value = text;
@@ -509,18 +462,6 @@ function updateSendButton(state) {
       if (localStorage.getItem("theme") === "dark") {
         document.body.classList.add("dark");
         document.querySelector(".toggle-btn").textContent = "☀️";
-      }
-
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            latitude = position.coords.latitude;
-            longitude = position.coords.longitude;
-          },
-          (error) => {
-            console.warn("⚠️ فشل تحديد الموقع:", error.message);
-          }
-        );
       }
     };
     
@@ -592,16 +533,7 @@ function stopTyping() {
       typing.style.display = "block";
 
       try {
-        const res = await fetch("https://chatbot-agri-production.up.railway.app/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            message: userText,
-            location: { latitude, longitude }
-          })
-        });
-
+        
         const data = await res.json();
         typing.style.display = "none";
         addMessage(data.response, "bot");
