@@ -646,7 +646,13 @@ function stopTyping() {
   input.value = "";
   updateSendButton("send");
   document.getElementById("suggestions").style.display = "flex";
+
+  if (typingInterval) {
+   clearInterval(typingInterval);
+   typingInterval = null;
+   isBotTyping = false;
 }
+
 
   </script>
 </body>
